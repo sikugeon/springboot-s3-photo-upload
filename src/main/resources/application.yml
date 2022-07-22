@@ -1,0 +1,17 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+
+reason:
+  data:
+    initialize: true
+
+logging:
+  level:
+    com.example.reason: debug
+    org.springframework.web: debug
