@@ -1,6 +1,7 @@
 package kr.sikugeon.photoalbum.core.object.domain;
 
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -17,7 +18,7 @@ public interface ObjectStorage {
      * @param resource 이미지 자원
      * @return 프로필 이미지에 접근 가능한 URI 개체
      */
-    URI save(Resource resource);
+    URI save(MultipartFile resource);
 
     /**
      * URI가 가르키는 자원을 찾아 반환한다.

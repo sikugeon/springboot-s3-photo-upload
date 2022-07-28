@@ -1,6 +1,5 @@
 package kr.sikugeon.photoalbum.core.object.infrastructure;
 
-import com.amazonaws.services.s3.AmazonS3Client;
 import kr.sikugeon.photoalbum.core.object.application.S3Uploader;
 import kr.sikugeon.photoalbum.core.object.domain.ObjectStorage;
 import kr.sikugeon.photoalbum.core.user.domain.ProfilePictureStorage;
@@ -12,13 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
-import org.springframework.util.FileCopyUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,10 +26,10 @@ import java.util.UUID;
  *
  * @author springrunner.kr@gmail.com
  */
-@Component
-public class CloudObjectStorage implements ObjectStorage, ResourceLoaderAware, InitializingBean {
+@Repository
+public class AmazonS3ObjectStorage implements ObjectStorage, ResourceLoaderAware, InitializingBean {
 
-    private final Logger log = LoggerFactory.getLogger(CloudObjectStorage.class);
+    private final Logger log = LoggerFactory.getLogger(AmazonS3ObjectStorage.class);
     @Autowired
     private S3Uploader s3Uploader;
 
@@ -59,14 +57,16 @@ public class CloudObjectStorage implements ObjectStorage, ResourceLoaderAware, I
     }
 
     @Override
-    public URI save(Resource resource) {
+    public URI save(MultipartFile multipartFile) {
         try {
 //            Path profilePicture = basePath.resolve(UUID.randomUUID().toString());
-            File file = resource.getFile();
+            File file = new File(System.getProperty("user.dir")+UUID.randomUUID()+multipartFile.getOriginalFilename());
+            multipartFile.transferTo(file);
             String url = s3Uploader.upload(file, "");
             return URI.create(url);
         } catch (Exception error) {
-            throw new RuntimeException();
+            log.debug(error.toString());
+            throw new RuntimeException(error);
         }
     }
 

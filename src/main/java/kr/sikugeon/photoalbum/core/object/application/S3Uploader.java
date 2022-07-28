@@ -16,11 +16,12 @@ public class S3Uploader {
     @Autowired
     private AmazonS3Client amazonS3Client;
 
-    @Value("")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
     public String upload(File uploadFile, String dirName){
-        String key = dirName+uploadFile.getName();
+        String key = uploadFile.getName();
+
         amazonS3Client.putObject(new PutObjectRequest(bucketName, key, uploadFile));
 
         return amazonS3Client

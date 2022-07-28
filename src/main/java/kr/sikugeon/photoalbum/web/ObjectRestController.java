@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,11 +29,11 @@ public class ObjectRestController {
 
     @PostMapping("/api/object")
 //    @RolesAllowed(UserSession.ROLE_USER)
-    public ResponseEntity<UploadInfo> uploadObject(MultipartFile object, UserSession session) {
+    public ResponseEntity<UploadInfo> uploadObject(@RequestParam("images") MultipartFile object, UserSession session) {
         log.debug("profilePicture: {}, {}", object.getOriginalFilename(), object.getContentType());
 
         // 업로드된 프로필 이미지 파일 저장하기
-        URI uploadedObjectUri = objectStorage.save(object.getResource());
+        URI uploadedObjectUri = objectStorage.save(object);
 //        log.debug("profilePictureUri : {}", profilePictureUri);
 
         UploadInfo uploadInfo = new UploadInfo();

@@ -13,5 +13,5 @@ reason:
 
 logging:
   level:
-    com.example.reason: debug
+    kr.sikugeon.photoalbum: debug
     org.springframework.web: debug
