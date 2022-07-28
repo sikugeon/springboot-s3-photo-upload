@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.security.RolesAllowed;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 public class ObjectRestController {
@@ -29,17 +31,25 @@ public class ObjectRestController {
 
     @PostMapping("/api/object")
     @RolesAllowed(UserSession.ROLE_USER)
-    public ResponseEntity<UploadInfo> uploadObject(@RequestParam("images") MultipartFile object, UserSession session) {
-        log.debug("profilePicture: {}, {}", object.getOriginalFilename(), object.getContentType());
+    public ResponseEntity<List<UploadInfo>> uploadObject(@RequestParam("images") List<MultipartFile> objects, UserSession session) {
 
-        // multipartfile을 s3에 업로드하기
-        URI uploadedObjectUri = objectStorage.save(object);
+        List<UploadInfo> uploadInfos = new ArrayList<>();
 
-        UploadInfo uploadInfo = new UploadInfo();
-        uploadInfo.setName(object.getName());
-        uploadInfo.setUri(uploadedObjectUri);
-        uploadInfo.setUploaded_at(new Date());
+        for(MultipartFile object:objects){
+            log.debug("profilePicture: {}, {}", object.getOriginalFilename(), object.getContentType());
 
-        return new ResponseEntity<>(uploadInfo, HttpStatus.ACCEPTED);
+            // multipartfile을 s3에 업로드하기
+            URI uploadedObjectUri = objectStorage.save(object);
+
+            UploadInfo uploadInfo = new UploadInfo();
+            uploadInfo.setName(object.getName());
+            uploadInfo.setUri(uploadedObjectUri);
+            uploadInfo.setUploaded_at(new Date());
+
+            uploadInfos.add(uploadInfo);
+        }
+
+
+        return new ResponseEntity<>(uploadInfos, HttpStatus.ACCEPTED);
     }
 }
