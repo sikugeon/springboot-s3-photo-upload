@@ -9,6 +9,8 @@ import kr.sikugeon.photoalbum.security.UserSession;
 import kr.sikugeon.photoalbum.security.UserSessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
@@ -46,10 +48,8 @@ public class LoginController {
     }
     
     @PostMapping("/login")    
-    public String loginProcess(@Valid LoginCommand command, Model model) {
+    public ResponseEntity<String> loginProcess(@Valid LoginCommand command, Model model) {
         log.debug("login command: {}", command);
-        log.debug("jdlkfaj");
-
 
         User user;
         try {
@@ -61,11 +61,11 @@ public class LoginController {
         } catch (UserPasswordNotMatchedException error) {
             // 3. 비밀번호가 틀린 경우: login 페이지로 돌려보내고, 오류 메시지 노출
             model.addAttribute("message", error.getMessage());
-            return "login";
+            return new ResponseEntity<>("wrong password", HttpStatus.UNAUTHORIZED);
         }
         userSessionRepository.set(new UserSession(user));
-        
-        return "redirect:/todos";
+
+        return new ResponseEntity<>("ok", HttpStatus.ACCEPTED);
     }
     
     @RequestMapping("/logout")

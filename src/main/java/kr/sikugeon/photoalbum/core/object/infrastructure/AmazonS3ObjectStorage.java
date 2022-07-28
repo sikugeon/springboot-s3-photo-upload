@@ -59,7 +59,6 @@ public class AmazonS3ObjectStorage implements ObjectStorage, ResourceLoaderAware
     @Override
     public URI save(MultipartFile multipartFile) {
         try {
-//            Path profilePicture = basePath.resolve(UUID.randomUUID().toString());
             File file = new File(System.getProperty("user.dir")+UUID.randomUUID()+multipartFile.getOriginalFilename());
             multipartFile.transferTo(file);
             String url = s3Uploader.upload(file, "");

@@ -28,13 +28,12 @@ public class ObjectRestController {
 
 
     @PostMapping("/api/object")
-//    @RolesAllowed(UserSession.ROLE_USER)
+    @RolesAllowed(UserSession.ROLE_USER)
     public ResponseEntity<UploadInfo> uploadObject(@RequestParam("images") MultipartFile object, UserSession session) {
         log.debug("profilePicture: {}, {}", object.getOriginalFilename(), object.getContentType());
 
-        // 업로드된 프로필 이미지 파일 저장하기
+        // multipartfile을 s3에 업로드하기
         URI uploadedObjectUri = objectStorage.save(object);
-//        log.debug("profilePictureUri : {}", profilePictureUri);
 
         UploadInfo uploadInfo = new UploadInfo();
         uploadInfo.setName(object.getName());
